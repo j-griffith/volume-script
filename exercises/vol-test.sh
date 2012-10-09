@@ -105,7 +105,15 @@ if ! timeout $ACTIVE_TIMEOUT sh -c "while ! nova volume-snapshot-list | grep $SN
     exit 1
 fi
 end_time=`date +%s`
-echo "Completed snapshot-delete in $((end_time - start_time)) seconds"
+echo "Issued snapshot-delete in $((end_time - start_time)) seconds"
+
+start_time=`date +%s`
+if ! timeout $ACTIVE_TIMEOUT sh -c "while ! nova volume-snapshot-list | grep $SNAP_NAME; do sleep 1; done"; then
+    echo "Snapshot $SNAP_NAME not deleted"
+    exit 1
+fi
+end_time=`date +%s`
+echo "Completed snapshot-create in $((end_time - start_time)) seconds"
 
 # Delete volume
 start_time=`date +%s`
